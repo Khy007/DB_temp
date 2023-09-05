@@ -76,13 +76,13 @@ public class DB_connect {
     			con.close();  
     		
     	}catch(Exception e){ 
-    		System.out.println(e);}
-		return con;  
-    		}
+    		System.out.println(e);
+    		}	
+    return con;  
+    }
 	
     public DB_connect insertData(int id, int szam, String name) {
     	
-
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
@@ -100,9 +100,10 @@ public class DB_connect {
     		readData();
     		
     	}catch(Exception e){ 
-    		System.out.println(e);}
-		return con;  
-    		}  
+    		System.out.println(e);
+    		}
+	return con;  
+    }  
 	
     public DB_connect updateData(int id, int updateId) {
     	
@@ -124,12 +125,13 @@ public class DB_connect {
     		readData();
     		
     	}catch(Exception e){ 
-    		System.out.println(e);}
-		return con;  
-    		}  
+    		System.out.println(e);
+    		}
+	return con;  
+    }  
+    
     public DB_connect deleteData(int id) {
     	
-
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
@@ -146,13 +148,14 @@ public class DB_connect {
     		readData();
     		
     	}catch(Exception e){ 
-    		System.out.println(e);}
-		return con;  
-    		} 
+    		System.out.println(e);
+    		}
+    	
+	return con;  
+    } 
     
     public DB_connect dropData() {
     	
-
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
@@ -167,9 +170,10 @@ public class DB_connect {
     		readData();
     		
     	}catch(Exception e){ 
-    		System.out.println(e);}
-		return con;  
-    		}  
+    		System.out.println(e);
+    		}
+	return con;  
+    }  
 	
 
 }
