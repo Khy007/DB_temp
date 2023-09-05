@@ -111,7 +111,7 @@ public class DB_connect {
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "UPDATE adatok SET ID=? WHERE ID=?";
+    		String myStatement = "UPDATE "+tabla+" SET ID=? WHERE ID=?";
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.setString(1,String.valueOf(updateId));
     		statement.setString(2,String.valueOf(id));
@@ -134,7 +134,7 @@ public class DB_connect {
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "DELETE FROM adatok WHERE ID=?";
+    		String myStatement = "DELETE FROM "+tabla+" WHERE ID=?";
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.setString(1,String.valueOf(id));
     		
@@ -157,7 +157,7 @@ public class DB_connect {
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "TRUNCATE TABLE adatok";
+    		String myStatement = "TRUNCATE TABLE "+tabla;
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.executeUpdate();
     		
