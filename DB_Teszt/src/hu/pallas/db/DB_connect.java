@@ -11,7 +11,9 @@ public class DB_connect {
     private String password;
     private String db_nev;
     private String tabla;
-    private static DB_connect con;
+    private int tablaOlszopSzamlalo;
+    private String[] tablaOszlopNev;
+    private boolean uzenetKiir = true;
     
     public String getUrl() {
 		return url;
@@ -61,120 +63,166 @@ public class DB_connect {
 		this.tabla = tabla;
 	}
 
-	public DB_connect readData() {
+	public int getTablaOlszopSzamlalo() {
+		return tablaOlszopSzamlalo;
+	}
 
+	public void setTablaOlszopSzamlalo(int tablaOlszopSzamlalo) {
+		this.tablaOlszopSzamlalo = tablaOlszopSzamlalo;
+	}
+
+	public String[] getTablaOszlopNev() {
+		return tablaOszlopNev;
+	}
+
+	public void setTablaOszlopNev(String[] tablaOszlopNev) {
+		this.tablaOszlopNev = tablaOszlopNev;
+	}
+
+	public boolean isUzenetKiir() {
+		return uzenetKiir;
+	}
+
+	public void setUzenetKiir(boolean uzenetKiir) {
+		this.uzenetKiir = uzenetKiir;
+	}
+
+	public void readData(String tabla) { //Adatok kiolvasása a táblából
+		
+		setTabla(tabla);
+		
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
-    		    		
     		Statement stmt=con.createStatement();  
-    		ResultSet rs=stmt.executeQuery("select * from "+getTabla());  
-    		System.out.println("Kapcsolat a(z) "+db_nev+" adatbazissal LETREJOTT!");
     		
-    		while(rs.next())  
-    			System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  
-    			con.close();  
+    			if (isUzenetKiir()){ 
+    				System.out.println("Kapcsolat a(z) "+getDb_nev()+" adatbazissal LETREJOTT!");
+    			}
+    		
+    		setUzenetKiir(false);
+    		
+    		ResultSet rs = stmt.executeQuery("SELECT * FROM "+getTabla());
+    		ResultSetMetaData rsMetaData = rs.getMetaData();
+   		
+	    	//Az adat tábla oszlopainak megszámolása és változóban történő tárolása        
+	    	setTablaOlszopSzamlalo(rsMetaData.getColumnCount());
+		    tablaOszlopNev = new String[getTablaOlszopSzamlalo()];
+		         
+		    //Kiolvasott oszlop nevek feltöltése egy String tömbbe az oszlop számláló alapján
+		    for (int i = 1; i <= getTablaOlszopSzamlalo(); i++) {
+		        System.out.print(rsMetaData.getColumnName(i)+"\t");
+		        tablaOszlopNev[i-1] = rsMetaData.getColumnName(i);
+		     }
+		     System.out.println();
+ 		
+		     
+		     //Tábla tartalmának kiiratása
+		     while(rs.next() && getTablaOlszopSzamlalo()>0) {  
+		    	 for (int i=1; i<=getTablaOlszopSzamlalo(); i++) {
+		    		 System.out.print(rs.getString(i)+"\t");
+		    		 }
+		    	 System.out.println();
+		     }
+    		
+	         con.close();  
+	         
+	         System.out.println();
     		
     	}catch(Exception e){ 
     		System.out.println(e);
-    		}	
-    return con;  
+    		}	 
     }
 	
-    public DB_connect insertData(int id, int szam, String name) {
+    public void insertData(String tabla, int id, int szam, String name) { //Adatok beirása a táblába
+    	
+    	setTabla(tabla);
     	
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     			
-    		String myStatement = " INSERT INTO "+tabla+" VALUES (?,?,?)";
+    		String myStatement = " INSERT INTO "+getTabla()+" VALUES (?,?,?)";
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.setString(1,String.valueOf(id));
     		statement.setString(2,String.valueOf(szam));
     		statement.setString(3,name);
     		statement.executeUpdate();
     		
-    		System.out.println("Adat sikeresen BETOLTVE! ID["+String.valueOf(id)+"], szam["+String.valueOf(szam)+"], nev["+name+"]");
-    		
+    		System.out.println("Adat sikeresen BETOLTVE! a(z) "+getTabla()+" nevu tablaba: ID["+String.valueOf(id)+"], szam["+String.valueOf(szam)+"], nev["+name+"]");
+    	
     		con.close();
-    		readData();
     		
     	}catch(Exception e){ 
     		System.out.println(e);
     		}
-	return con;  
     }  
 	
-    public DB_connect updateData(int id, int updateId) {
+    public void updateData(String tabla, int id, int updateId) {   //Adatok felülirása a táblában
     	
+    	setTabla(tabla);
 
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "UPDATE "+tabla+" SET ID=? WHERE ID=?";
+    		String myStatement = "UPDATE "+getTabla()+" SET ID=? WHERE ID=?";
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.setString(1,String.valueOf(updateId));
     		statement.setString(2,String.valueOf(id));
     		
     		statement.executeUpdate();
     		
-    		System.out.println("Adat FRISSITVE! regiID["+String.valueOf(id)+"] az ujID("+String.valueOf(updateId)+")" );
+    		System.out.println("Adat FRISSITVE! a(z) "+getTabla()+" nevu tablaban: regiID["+String.valueOf(id)+"] ujID("+String.valueOf(updateId)+")" );
     		
     		con.close();
-    		readData();
     		
     	}catch(Exception e){ 
     		System.out.println(e);
-    		}
-	return con;  
+    		} 
     }  
     
-    public DB_connect deleteData(int id) {
+    public void deleteData(String tabla, int id) { //Adatok törlése a táblából
+    	
+    	setTabla(tabla);
     	
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "DELETE FROM "+tabla+" WHERE ID=?";
+    		String myStatement = "DELETE FROM "+getTabla()+" WHERE ID=?";
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.setString(1,String.valueOf(id));
     		
     		statement.executeUpdate();
     		
-    		System.out.println("Adat TOROLVE! az azonosito ID["+String.valueOf(id)+"]");
+    		System.out.println("Adat TOROLVE! a(z) "+getTabla()+" nevu tablaban az azonosito ID["+String.valueOf(id)+"]");
     		
     		con.close();
-    		readData();
     		
     	}catch(Exception e){ 
     		System.out.println(e);
-    		}
-    	
-	return con;  
+    		} 
     } 
     
-    public DB_connect dropData() {
+    public void dropData(String tabla) { //Adat teljes törlése a táblából
+    	
+    	setTabla(tabla);
     	
     	try{  
     		Class.forName(driverName);  
     		Connection con=DriverManager.getConnection(url, username, password);  
     		
-    		String myStatement = "TRUNCATE TABLE "+tabla;
+    		String myStatement = "TRUNCATE TABLE "+getTabla();
     		PreparedStatement statement= con.prepareStatement (myStatement);
     		statement.executeUpdate();
     		
     		System.out.println("A(z) "+getTabla()+" nevu tabla adatai KIURITVE!");
     		
     		con.close();
-    		readData();
     		
     	}catch(Exception e){ 
     		System.out.println(e);
     		}
-	return con;  
     }  
-	
-
 }
-

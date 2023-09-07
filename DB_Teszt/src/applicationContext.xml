@@ -7,12 +7,19 @@
     	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
   
  <bean id = "csatlakozas" class = "hu.pallas.db.DB_connect">
-      <property name = "driverName" value = "com.mysql.cj.jdbc.Driver"/>
+      <property name = "driverName" value = "com.mysql.cj.jdbc.Driver"/> 
+      
+      <!-- Az adatbázis elérési útját pontositsd a sajátod szerint --> 
       <property name = "url" value = "jdbc:mysql://192.168.100.10:3306/db_teszt"/>
+      
+      <!-- Adatbázishoz a felhasználó neve -->
       <property name = "username" value = "PallasBazsi"/>
+      
+      <!-- Adatbázishoz a felhasználói jelszó -->
       <property name = "password" value = "Pallas2022*"/>
-      <property name = "db_nev" value = "db_teszt"/>
-      <property name = "tabla" value = "adatok"/>
+      
+      <!-- Adatbázisod neve -->
+      <property name = "db_nev" value = "db_teszt"/>     
  </bean> 
 
   
